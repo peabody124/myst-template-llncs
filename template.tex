@@ -1,0 +1,124 @@
+\documentclass[runningheads]{llncs}
+\usepackage{hyperref}
+
+% Setting up references. Compared to the original template, this is 
+% using the splncsnat style which supports natbib references. Also,
+% it isn't clear to me why the bibsection needs to be redefined, but
+% this makes it consistent with the examples.
+\usepackage[numbers,square]{natbib}
+\bibliographystyle{splncsnat}
+\renewcommand\bibsection{
+   \section*{References}
+   \markboth{\MakeUppercase{\refname}}{\MakeUppercase{\refname}}
+ }
+
+[-IMPORTS-]
+
+%% MyST Note: this orcid icon isn't part of the original llncs template. this is
+%% just much more aesthetic and space friendly
+\usepackage{hyperref}
+\usepackage{lineno}					% Line numbers
+\usepackage{tikz} 					% ORCiD insertion
+\definecolor{lime}{HTML}{A6CE39}
+\DeclareRobustCommand{\orcidicon}{
+	\begin{tikzpicture}
+	\draw[lime, fill=lime] (0,0)
+	circle [radius=0.16]
+	node[white] {{\fontfamily{qag}\selectfont \tiny ID}};
+	\draw[white, fill=white] (-0.0625,0.095)
+	circle [radius=0.007];
+	\end{tikzpicture}
+	\hspace{-2mm}
+}
+
+%% MyST Note: similarly using the Letter to associate the email isn't in the
+%% template. I found this functionally necessary, though, since the template
+%% interleaves institutions and emails in a manual way that I cannot handle.
+\usepackage[misc]{ifsym} % For the \Letter symbol
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%   Title   %%%%%%%%%%%%%%%%
+\title{[-doc.title-]}
+
+
+%%%%%%%%%%%%%%%  Author list  %%%%%%%%%%%%%%%
+
+\author{
+[# for author in doc.authors #]
+	[--author.name-]
+	\inst{[--author.affiliations|join(', ', 'index')--]}
+	[#- if author.orcid -#]
+	%\orcidID{[-author.orcid-]}
+	\href{https://orcid.org/[-author.orcid-]}{\orcidicon}
+	[#-if author.email-#]
+	\href{[-author.email-]}{\Letter}
+	[#-endif-#]	
+	[#- endif -#]
+	[#- if not loop.last #] \and [# endif #]
+[# endfor #]
+}
+
+\institute{
+[# for affiliation in doc.affiliations #]
+{[-affiliation.value-]}
+[#- if not loop.last #] \and [# endif #]
+[# endfor #]
+}
+
+% if the length of doc.authors is > 2 use author running with just first author et al
+% TODO: need to also parse the name and only show the last word
+[# if doc.authors.length > 2 #]
+\authorrunning{[-doc.authors[0].name-] et al.}
+[# else #]
+[# endif #]
+
+\maketitle
+
+[# if parts.abstract #]
+\begin{abstract}
+[-parts.abstract-]\\
+
+[# if doc.keywords #]
+\keywords{[-doc.keywords|join(", ")-]}
+[# endif #]
+
+\end{abstract}
+[# endif #]
+
+
+%%%%%%%%%%%%%%%  Main text   %%%%%%%%%%%%%%%
+
+[-CONTENT-]
+
+[# if parts.acknowledgments #]
+%%%%%%%%%%%%% Acknowledgements %%%%%%%%%%%%%
+\section*{Acknowledgements}
+\footnotesize
+[- parts.acknowledgments -]
+\normalsize
+[# endif #]
+
+[# if options.link #]
+\section*{Original article}
+\footnotesize
+This article is available online at the following URL: \href{[-options.link-]}{[-options.link-]}
+\normalsize
+[# endif #]
+
+%%%%%%%%%%%%%%   Bibliography   %%%%%%%%%%%%%%
+[# if doc.bibliography #]
+\bibliography{[- doc.bibliography | join(", ") -]}
+[# endif #]
+
+
+%%%%%%%%%%%%%%   Appendix   %%%%%%%%%%%%%%
+
+%% MyST Note: Appendix isn't a part of the original template.
+[# if parts.appendix #]
+\clearpage
+\section*{Appendix}
+[-parts.appendix-]
+[# endif #]
+
+\end{document}
